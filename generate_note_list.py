@@ -1,4 +1,4 @@
-# generate_note_list.py
+# generate_note_list.py（手動タグ分類対応済み）
 import requests
 import xml.etree.ElementTree as ET
 from collections import defaultdict
@@ -8,6 +8,16 @@ rss_url = "https://note.com/saiwaimoribuddhi/rss"
 response = requests.get(rss_url)
 root = ET.fromstring(response.content)
 
+def categorize(title):
+    if "神と仏のオープンカレッジ" in title:
+        return "神と仏のオープンカレッジ"
+    elif "仏教講座" in title:
+        return "仏教講座"
+    elif "幸いの森" in title:
+        return "幸いの森"
+    else:
+        return "未分類"
+
 grouped_articles = defaultdict(list)
 
 for item in root.findall("./channel/item"):
@@ -15,7 +25,7 @@ for item in root.findall("./channel/item"):
     link = item.findtext("link")
     pubDate = item.findtext("pubDate")
     date = pubDate[:16] if pubDate else "日付不明"
-    category = item.findtext("category") or "未分類"
+    category = categorize(title)
     grouped_articles[category].append({
         "title": title,
         "url": link,
@@ -54,4 +64,4 @@ html_content += """
 with open("note_list.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print("✅ note_list.html を生成しました。")
+print("✅ note_list.html を生成しました（カテゴリ分類あり）")
