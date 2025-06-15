@@ -1,0 +1,57 @@
+# generate_note_list.py
+import requests
+import xml.etree.ElementTree as ET
+from collections import defaultdict
+
+rss_url = "https://note.com/saiwaimoribuddhi/rss"
+
+response = requests.get(rss_url)
+root = ET.fromstring(response.content)
+
+grouped_articles = defaultdict(list)
+
+for item in root.findall("./channel/item"):
+    title = item.findtext("title")
+    link = item.findtext("link")
+    pubDate = item.findtext("pubDate")
+    date = pubDate[:16] if pubDate else "日付不明"
+    category = item.findtext("category") or "未分類"
+    grouped_articles[category].append({
+        "title": title,
+        "url": link,
+        "date": date
+    })
+
+html_content = """<!DOCTYPE html>
+<html lang=\"ja\">
+<head>
+  <meta charset=\"UTF-8\">
+  <title>Note記事一覧</title>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; line-height: 1.6; background: #fff; }
+    h1 { color: #333; }
+    h2 { color: #4caf50; margin-top: 1.5em; }
+    li { margin-bottom: .5em; }
+    a { text-decoration: none; color: #0066cc; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h1>Note記事 タグ別一覧</h1>
+"""
+
+for tag, articles in grouped_articles.items():
+    html_content += f"<section>\n<h2>{tag}</h2>\n<ul>\n"
+    for item in articles:
+        html_content += f'<li><a href="{item["url"]}" target="_blank">{item["title"]}（{item["date"]}）</a></li>\n'
+    html_content += "</ul>\n</section>\n"
+
+html_content += """
+</body>
+</html>
+"""
+
+with open("note_list.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print("✅ note_list.html を生成しました。")
