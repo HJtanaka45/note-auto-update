@@ -1,8 +1,8 @@
 # ========================================
-# 🎉 トト専用 GitHub Actions Workflow（修正：note_list.html更新）
+# 🎉 トト専用 GitHub Actions Workflow（note_list & note_grid 両方対応版）
 # ========================================
 
-name: Generate & Deploy Note List
+name: Generate & Deploy Note Pages
 
 on:
   schedule:
@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-note-list:
+  update-note-pages:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,14 +22,18 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: 🔄 requestsインストール
+      - name: 🔄 ライブラリインストール
         run: |
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: 📚 RSSからnote_list.htmlを生成
+      - name: 📚 RSSから note_list.html を生成
         run: |
           python generate_note_list.py
+
+      - name: 🖼 RSSから note_grid.html を生成（カード形式）
+        run: |
+          python generate_note_grid.py
 
       - name: 📁 FTPでサーバーにアップロード
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -37,5 +41,5 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
+          local-dir: ./  # どちらもルートにあるならこれでOK
           server-dir: /saiwainomori.com/
