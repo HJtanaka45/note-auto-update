@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 from collections import defaultdict
 from datetime import datetime
 import re
+from email.utils import parsedate_to_datetime
 
 rss_url = "https://note.com/saiwaimoribuddhi/rss"
 response = requests.get(rss_url)
@@ -19,6 +20,20 @@ def categorize(title):
     else:
         return "未分類"
 
+def fetch_og_image(url):
+    try:
+        html = requests.get(url, timeout=5).text
+        match = re.search(r'<meta property="og:image" content="([^"]+)"', html)
+        return match.group(1) if match else "/img/no-image.jpg"
+    except:
+        return "/img/no-image.jpg"
+
+def parse_date(pub_date):
+    try:
+        return parsedate_to_datetime(pub_date)
+    except:
+        return datetime.min
+
 grouped_articles = defaultdict(list)
 
 for item in root.findall("./channel/item"):
@@ -26,8 +41,7 @@ for item in root.findall("./channel/item"):
     link = item.findtext("link")
     pubDate = item.findtext("pubDate")
     description = item.findtext("description") or ""
-    image_match = re.search(r'<img src="(https://assets\\.st-note\\.com/[^"]+)', description)
-    image_url = image_match.group(1) if image_match else ""
+    image_url = fetch_og_image(link)
     lead_text = re.sub(r'<[^>]+>', '', description).strip()
     lead_text = lead_text[:70] + "…" if len(lead_text) > 70 else lead_text
 
@@ -77,21 +91,13 @@ print("✅ note_list.html を生成しました（カテゴリ分類あり）")
 
 # === 追加：note_grid.html の生成 ===
 
-def parse_date(pub_date):
-    try:
-        return datetime.strptime(pub_date, '%a, %d %b %Y %H:%M:%S %Z')
-    except:
-        return datetime.min
-
-# 最新順に並び替え（最大6件）
 articles = []
 for item in root.findall("./channel/item"):
     title = item.findtext("title")
     link = item.findtext("link")
     pubDate = item.findtext("pubDate")
     description = item.findtext("description") or ""
-    image_match = re.search(r'<img src="(https://assets\\.st-note\\.com/[^"]+)', description)
-    image_url = image_match.group(1) if image_match else "/img/no-image.jpg"
+    image_url = fetch_og_image(link)
     lead_text = re.sub(r'<[^>]+>', '', description).strip()
     lead_text = lead_text[:70] + "…" if len(lead_text) > 70 else lead_text
 
@@ -156,7 +162,7 @@ for item in latest_articles:
         grid_html += f"  <img src='{item['image']}' alt='thumbnail'>\n"
     grid_html += f"  <h3><a href='{item['url']}' target='_blank'>{item['title']}</a></h3>\n"
     if item['date'] != datetime.min:
-        grid_html += f"  <p class='date'>{item['date'].strftime('%a, %d %b %Y')}</p>\n"
+        grid_html += f"  <p class='date'>{item['date'].strftime('%Y年%m月%d日')}</p>\n"
     grid_html += f"  <p class='lead'>{item['lead']} <a href='{item['url']}' target='_blank'>続きを読む</a></p>\n"
     grid_html += "</div>\n"
 
