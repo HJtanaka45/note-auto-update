@@ -2,6 +2,7 @@
 import requests
 import xml.etree.ElementTree as ET
 from collections import defaultdict
+from datetime import datetime
 
 rss_url = "https://note.com/saiwaimoribuddhi/rss"
 
@@ -65,3 +66,61 @@ with open("note_list.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
 print("✅ note_list.html を生成しました（カテゴリ分類あり）")
+
+# === 追加：note_grid.html の生成 ===
+
+def parse_date(pub_date):
+    try:
+        return datetime.strptime(pub_date, '%a, %d %b %Y %H:%M:%S %Z')
+    except:
+        return datetime.min
+
+# 最新順に並び替え（最大6件）
+articles = []
+for item in root.findall("./channel/item"):
+    title = item.findtext("title")
+    link = item.findtext("link")
+    pubDate = item.findtext("pubDate")
+    date = parse_date(pubDate)
+    articles.append({"title": title, "url": link, "date": date})
+
+articles.sort(key=lambda x: x["date"], reverse=True)
+latest_articles = articles[:6]
+
+grid_html = """<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Note 最新記事</title>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; background: #fff; }
+    h1 { color: #333; text-align: center; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    .card { border: 1px solid #ddd; padding: 1rem; border-radius: 5px; background: #f9f9f9; }
+    .card h3 { font-size: 1em; margin: 0 0 .5em; }
+    .card p { font-size: .9em; color: #555; }
+    a { color: #0066cc; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h1>最新記事</h1>
+  <div class="grid">
+"""
+
+for item in latest_articles:
+    grid_html += f"<div class='card'>\n"
+    grid_html += f"  <h3><a href='{item['url']}' target='_blank'>{item['title']}</a></h3>\n"
+    grid_html += f"  <p>{item['date'].strftime('%a, %d %b %Y')}</p>\n"
+    grid_html += "</div>\n"
+
+grid_html += """
+  </div>
+</body>
+</html>
+"""
+
+with open("note_grid.html", "w", encoding="utf-8") as f:
+    f.write(grid_html)
+
+print("✅ note_grid.html を生成しました（最新記事6件）")
