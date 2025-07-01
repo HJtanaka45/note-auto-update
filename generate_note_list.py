@@ -26,7 +26,7 @@ for item in root.findall("./channel/item"):
     link = item.findtext("link")
     pubDate = item.findtext("pubDate")
     description = item.findtext("description") or ""
-    image_match = re.search(r'<img src="(https://assets\.st-note\.com/[^\"]+)', description)
+    image_match = re.search(r'<img src="(https://assets\\.st-note\\.com/[^"]+)', description)
     image_url = image_match.group(1) if image_match else ""
     lead_text = re.sub(r'<[^>]+>', '', description).strip()
     lead_text = lead_text[:70] + "…" if len(lead_text) > 70 else lead_text
@@ -90,8 +90,8 @@ for item in root.findall("./channel/item"):
     link = item.findtext("link")
     pubDate = item.findtext("pubDate")
     description = item.findtext("description") or ""
-    image_match = re.search(r'<img src="(https://assets\.st-note\.com/[^\"]+)', description)
-    image_url = image_match.group(1) if image_match else ""
+    image_match = re.search(r'<img src="(https://assets\\.st-note\\.com/[^"]+)', description)
+    image_url = image_match.group(1) if image_match else "/img/no-image.jpg"
     lead_text = re.sub(r'<[^>]+>', '', description).strip()
     lead_text = lead_text[:70] + "…" if len(lead_text) > 70 else lead_text
 
@@ -155,8 +155,9 @@ for item in latest_articles:
     if item['image']:
         grid_html += f"  <img src='{item['image']}' alt='thumbnail'>\n"
     grid_html += f"  <h3><a href='{item['url']}' target='_blank'>{item['title']}</a></h3>\n"
-    grid_html += f"  <p class='date'>{item['date'].strftime('%a, %d %b %Y')}</p>\n"
-    grid_html += f"  <p class='lead'>{item['lead']}</p>\n"
+    if item['date'] != datetime.min:
+        grid_html += f"  <p class='date'>{item['date'].strftime('%a, %d %b %Y')}</p>\n"
+    grid_html += f"  <p class='lead'>{item['lead']} <a href='{item['url']}' target='_blank'>続きを読む</a></p>\n"
     grid_html += "</div>\n"
 
 grid_html += """
