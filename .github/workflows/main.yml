@@ -5,9 +5,9 @@
 name: Generate & Deploy Note Content
 
 on:
-  schedule:
-    - cron: '0 1 * * *'  # JSTで毎日10:00実行（UTCで1:00）
   workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * *'
 
 jobs:
   update-note-content:
