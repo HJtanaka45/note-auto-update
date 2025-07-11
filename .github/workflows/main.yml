@@ -38,3 +38,4 @@ jobs:
             note_list.html
             note_grid.html
             note_simple.html
+            generate_note_list.py
