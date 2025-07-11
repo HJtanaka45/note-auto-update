@@ -3,7 +3,7 @@ import feedparser
 from datetime import datetime
 
 # RSSフィードURL（note公式）
-rss_url = "https://note.com/saiwainomori/rss"
+rss_url = "https://note.com/saiwaimoribuddhi/rss"
 feed = feedparser.parse(rss_url)
 
 # HTMLヘッダー＋CSS内包
