@@ -21,10 +21,12 @@ jobs:
         run: pip install requests
 
       - name: RSSから note_list.html & note_grid.html & note_simple.html を生成
-        run: |
-          python generate_note_list.py
-          echo "✅ Pythonスクリプトの実行完了"
-          ls -l
+  run: |
+    python generate_note_list.py
+    python generate_note_simple.py
+    echo "✅ Pythonスクリプトの実行完了"
+    ls -l
+
 
       - name: FTPで note_list.html, note_grid.html, note_simple.html をアップロード
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -34,8 +36,10 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
           server-dir: /saiwainomori.com/
-          include: |
-            note_list.html
-            note_grid.html
-            note_simple.html
-            generate_note_list.py
+         include: |
+  note_list.html
+  note_grid.html
+  note_simple.html
+  generate_note_list.py
+
+
