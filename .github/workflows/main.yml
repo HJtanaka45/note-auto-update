@@ -1,4 +1,5 @@
-# generate_note_list.py（手動タグ分類対応済み + note_grid + note_simple）
+# トト専用 GitHub Actions Workflow
+# (修正済: note_list.html / note_grid.html 更新)
 import requests
 import xml.etree.ElementTree as ET
 from collections import defaultdict
