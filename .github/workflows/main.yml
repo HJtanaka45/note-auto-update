@@ -17,8 +17,11 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: requestsライブラリのインストール
-        run: pip install requests
+- name: ライブラリのインストール
+  run: |
+    pip install requests
+    pip install feedparser
+
 
       - name: RSSから note_list.html & note_grid.html & note_simple.html を生成
         run: |
