@@ -16,11 +16,11 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-- name: ライブラリのインストール
-  run: |
-    pip install requests
-    pip install feedparser
 
+      - name: ライブラリのインストール
+        run: |
+          pip install requests
+          pip install feedparser
 
       - name: RSSから note_list.html & note_grid.html & note_simple.html を生成
         run: |
@@ -40,5 +40,7 @@ jobs:
           include: |
             note_list.html
             note_grid.html
+            note_simple.html
+
             note_simple.html
             generate_note_list.py
