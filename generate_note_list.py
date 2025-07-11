@@ -176,3 +176,32 @@ with open("note_grid.html", "w", encoding="utf-8") as f:
     f.write(grid_html)
 
 print("✅ note_grid.html を生成しました（最新記事6件、画像・リード文対応）")
+
+# note_simple.html の生成処理（分類なし・タイトルと日付のみ）
+simple_html = """<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Note記事一覧（シンプル）</title>
+</head>
+<body>
+    <h1>Note記事一覧</h1>
+    <ul>
+"""
+
+for item in items:  # items は RSS の各記事データのリスト（すでに取得済みのはず）
+    title = item.find('title').text
+    pub_date = item.find('pubDate').text
+    simple_html += f"<li>{title} - {pub_date}</li>\n"
+
+simple_html += """
+    </ul>
+</body>
+</html>
+"""
+
+with open("note_simple.html", "w", encoding="utf-8") as f:
+    f.write(simple_html)
+
+print("✅ note_simple.html を生成しました（分類・タグなし）")
+
