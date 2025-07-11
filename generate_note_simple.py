@@ -13,7 +13,11 @@ html_head = '''<!DOCTYPE html>
   <meta charset="utf-8">
   <title>NOTE記事一覧</title>
   <style>
-    body {
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
       margin: 0;
       padding: 20px 10px;
       font-family: "游ゴシック", "Hiragino Kaku Gothic Pro", sans-serif;
@@ -22,38 +26,53 @@ html_head = '''<!DOCTYPE html>
       font-size: 16px;
       line-height: 1.7;
     }
+
     ul.note-simple-list {
       list-style: none;
       padding: 0;
       margin: 0;
     }
+
     ul.note-simple-list li {
       border-bottom: 1px solid #e5e5e5;
       padding: 14px 8px;
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
     }
+
     ul.note-simple-list li a {
-      color: #226622;
-      text-decoration: none;
+      color: #226622 !important;
+      text-decoration: none !important;
+      font-weight: 500 !important;
       flex-grow: 1;
-      font-weight: 500;
+
+      /* 🔥 ここが2行制限解除の呪文 */
+      display: block !important;
+      overflow: visible !important;
+      text-overflow: unset !important;
+      white-space: normal !important;
+      -webkit-line-clamp: unset !important;
+      -webkit-box-orient: unset !important;
     }
+
     ul.note-simple-list li a:hover {
-      text-decoration: underline;
+      text-decoration: underline !important;
     }
+
     .date {
       color: #666;
       font-size: 14px;
       white-space: nowrap;
       margin-left: 1em;
     }
+
     @media (max-width: 600px) {
       ul.note-simple-list li {
         flex-direction: column;
         align-items: flex-start;
       }
+
       .date {
         margin-left: 0;
         margin-top: 4px;
